@@ -1,6 +1,13 @@
 //SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.0;
 
+/**
+    @title UDOT Contract
+    @author ljrr3045
+    @notice ERC20 contract to function as a utility token for the Univerdidad de Oriente.
+    @dev Each minted token will be backed 1:1 by MATIC.
+*/
+
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
@@ -48,12 +55,19 @@ contract UDOT is ERC20, Ownable, Pausable {
 
 //Useful Functions
 
+    /**
+        @notice Allows the user to mine UDOT in exchange for MATIC, each UDOT will be backed 1:1 by MATIC
+    */
     function mint() external payable{
         require(msg.value > 0,"UDOT: The amount must be greater than 0");
 
         _mint(_msgSender(), msg.value);
     }
 
+    /**
+        @notice Allows the user to burn UDOT in exchange for MATIC. For each UDOT that is burned, the user will 
+        receive the same value in MATIC.
+    */
     function burn(uint256 _amount) external {
         require(_amount > 0,"UDOT: The amount must be greater than 0");
 
@@ -65,14 +79,17 @@ contract UDOT is ERC20, Ownable, Pausable {
 
 //Only Owner Functions
 
+    ///@dev Owner can pause token transfer
     function pause() external onlyOwner {
         _pause();
     }
 
+    ///@dev Owner can unpause token transfer
     function unpause() external onlyOwner {
         _unpause();
     }
 
+    ///@dev The owner can add a user to the white list and thus not pay transfer taxes
     function whiteList(address _user, bool _isWhitelisted) external onlyOwner {
         require(address(0) != _user,"UDOT: User is zero address");
 
@@ -80,6 +97,7 @@ contract UDOT is ERC20, Ownable, Pausable {
         emit userWhiteList(_user, _isWhitelisted);
     }
 
+    ///@dev The owner can establish which will be the wallet that receives all the fees
     function setFeeWallet(address _feeWallet) external onlyOwner {
         require(address(0) != _feeWallet,"UDOT: FeeWallet is zero address");
 
@@ -87,6 +105,7 @@ contract UDOT is ERC20, Ownable, Pausable {
         feeWallet = _feeWallet;
     }
 
+    ///@dev The owner can establish what the sales tax will be
     function setSellTax(uint256 _taxPercent) external onlyOwner {
         require((_taxPercent > 0) && (_taxPercent < 2000),"UDOT: Taxes cannot be higher than 20%");
 
@@ -94,6 +113,7 @@ contract UDOT is ERC20, Ownable, Pausable {
         sellTax = _taxPercent;
     }
 
+    ///@dev The owner can establish what the buy tax will be
     function setBuyTax(uint256 _taxPercent) external onlyOwner {
         require((_taxPercent > 0) && (_taxPercent < 2000),"UDOT: Taxes cannot be higher than 20%");
 
@@ -101,6 +121,7 @@ contract UDOT is ERC20, Ownable, Pausable {
         buyTax = _taxPercent;
     }
 
+    ///@dev The owner can recover tokens stuck in the contract (but not MATIC)
     function rescueStuckToken(address _token, address _to) external onlyOwner {
 
         uint256 _amount = ERC20(_token).balanceOf(address(this));
@@ -109,12 +130,14 @@ contract UDOT is ERC20, Ownable, Pausable {
 
 //Override Functions
 
+    ///@dev Check that you cannot mint more than 1M tokens
     function _mint(address account, uint256 amount) internal override {
         require((ERC20.totalSupply() + amount) <= cap, 'UDOT: Maximum capital exceeded');
 
         super._mint(account, amount);
     }
 
+    ///@dev overwrite the transfer function to be able to take the taxes
     function _transfer( address from, address to, uint256 amount ) internal override whenNotPaused{
 
         if ((!whitelisted[to]) && (buyTax > 0) && (feeWallet != address(0))) {
