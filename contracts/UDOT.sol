@@ -16,8 +16,6 @@ contract UDOT is ERC20, Ownable, Pausable {
     address public feeWallet;
 
     uint256 public cap;
-    uint256 public maxBuy;
-    uint256 public maxSell;
     uint256 public sellTax;
     uint256 public buyTax;
 
@@ -27,8 +25,6 @@ contract UDOT is ERC20, Ownable, Pausable {
 
 //Events
 
-    event SetMaxSell(uint256 _MaxSell);
-    event SetMaxBuy(uint256 _MaxBuy);
     event userWhiteList(address _user, bool _status);
     event changeFeeWallet(address _lastFeeWallet, address _newFeeWallet);
     event changeSellTax(uint256 _lastTax, uint256 _newTax);
@@ -39,13 +35,11 @@ contract UDOT is ERC20, Ownable, Pausable {
     constructor() ERC20("Universidad de Oriente", "UDOT") {
 
         IUniswapV2Router02 _uniswapV2Router = IUniswapV2Router02(0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506);
-
-        feeWallet = msg.sender;
         uniswapPair = IUniswapV2Factory(_uniswapV2Router.factory()).createPair(address(this), _uniswapV2Router.WETH());
 
-        maxBuy = 5000 * 10**decimals();
-        maxSell = 5000 * 10**decimals();
-
+        feeWallet = msg.sender;
+        whitelisted[feeWallet] = true;
+        
         sellTax = 200; // 2%
         buyTax = 200; // 2%
 
@@ -86,20 +80,6 @@ contract UDOT is ERC20, Ownable, Pausable {
         emit userWhiteList(_user, _isWhitelisted);
     }
 
-    function setMaxBuy(uint256 _maxBuy) external onlyOwner {
-        require(_maxBuy >= (1 * 10**decimals()),"UDOT: The amount must be greater than 1 MATIC");
-
-        maxBuy = _maxBuy;
-        emit SetMaxBuy(_maxBuy);
-    }
-
-    function setMaxSell(uint256 _maxSell) external onlyOwner {
-        require(_maxSell >= (1 * 10**decimals()),"UDOT: The amount must be greater than 1 MATIC");
-
-        maxSell = _maxSell;
-        emit SetMaxSell(_maxSell);
-    }
-
     function setFeeWallet(address _feeWallet) external onlyOwner {
         require(address(0) != _feeWallet,"UDOT: FeeWallet is zero address");
 
@@ -130,7 +110,7 @@ contract UDOT is ERC20, Ownable, Pausable {
 //Override Functions
 
     function _mint(address account, uint256 amount) internal override {
-        require((ERC20.totalSupply() + amount) <= cap, 'UDOT: Cap exceeded');
+        require((ERC20.totalSupply() + amount) <= cap, 'UDOT: Maximum capital exceeded');
 
         super._mint(account, amount);
     }
