@@ -1,6 +1,9 @@
 # Universidad de Oriente Token - UDOT
 
-![Image text](https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/Logo_UDO.svg/1200px-Logo_UDO.svg.png)
+<img 
+    src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/Logo_UDO.svg/1200px-Logo_UDO.svg.png"
+    width="200"
+/>
 
 This project was created under the idea of designing a decentralized and autonomous payment system, with which it is sought to serve as an economic and financial refuge for the "Universidad de Oriente". The main mission of this project is to allow the university to manage its funds autonomously and in turn offer students more transparency and different payment methods.
 
