@@ -63,6 +63,9 @@ This project uses the following technologies and protocols:
 The information on smart contracts can be found at the following link:
 * [Documentation](https://github.com/Ljrr3045/udo-erc20-token/blob/master/docs/index.md)
 
+You can verify the contract in the Polygon network at the following link:
+* [Contract verified in polygon](https://polygonscan.com/token/0xEc969d8308F5a9BE1C473CCDE957f08aa48Cfc64)
+
 ## Useful commands
 
 ```
