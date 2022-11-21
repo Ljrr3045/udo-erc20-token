@@ -13,8 +13,8 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
-import '@uniswap/v2-core/contracts/interfaces/IUniswapV2Factory.sol';
-import '@uniswap/v2-periphery/contracts/interfaces/IUniswapV2Router02.sol';
+import "./interfaces/IUniswapV2Factory.sol";
+import "./interfaces/IUniswapV2Router.sol";
 
 contract UDOT is ERC20, Ownable, Pausable {
     using SafeMath for uint256;
@@ -41,7 +41,7 @@ contract UDOT is ERC20, Ownable, Pausable {
 
     constructor() ERC20("Universidad de Oriente", "UDOT") {
 
-        IUniswapV2Router02 _uniswapV2Router = IUniswapV2Router02(0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506);
+        IUniswapV2Router _uniswapV2Router = IUniswapV2Router(0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506);
         uniswapPair = IUniswapV2Factory(_uniswapV2Router.factory()).createPair(address(this), _uniswapV2Router.WETH());
 
         feeWallet = msg.sender;

@@ -17,5 +17,8 @@
     "@uniswap/v2-core": "^1.0.1",
     "@uniswap/v2-periphery": "^1.1.0-beta.0",
     "solidity-docgen": "^0.6.0-beta.30"
+  },
+  "scripts": {
+    "contract:deploy": "npx hardhat run --network hardhat scripts/Udot.script.js"
   }
 }
